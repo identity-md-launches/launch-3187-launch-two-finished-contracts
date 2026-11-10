@@ -1,0 +1,26 @@
+{
+  "kind": "evm_contracts",
+  "contracts": [
+    {
+      "contract": "Judge",
+      "constructorArgs": [
+        "0x5598aa9146215bc13eb26f2c692ad1461fd32982",
+        "0xa43e6f75ee006411f79ac1c84120606c2330de82",
+        "0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7",
+        "100",
+        "51"
+      ]
+    },
+    {
+      "contract": "JudgeEthDoor",
+      "constructorArgs": [
+        "$contract:Judge",
+        "0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7",
+        "0x000000000004444c5dc75cb358380d2e3de08a90",
+        "10000",
+        "200"
+      ]
+    }
+  ],
+  "notes": "Ethereum application-only launch: Judge first, then JudgeEthDoor referencing that Judge, with exactly the approved constructor arguments. Both constructors are nonpayable and make no external calls. Neither application has an owner, externally accessible signer setter, upgrade path, proxy or added application fee. No token, pool, helper, example or website is deployed by this manifest. Starting commit: 0f0b3c17ba4273b18d807de17bd2ff3479ed2a98. Contract sources, dependencies, compiler settings, Judge question wording, signatures and events are unchanged; only launch.json is submitted. Bounded source review of Judge, JudgeEthDoor, their supporting code and Judged found no critical or high issue requiring a source change. Judge binds signed answers to its domain and each case's question, checks the intake caller and panel thresholds, and rejects late or repeated decisions. JudgeEthDoor requires the full token output, caps swap spending at the ETH attached and atomically refunds the remainder. Trust remains in the fixed oracle signer, the intake's delivery and pricing, the asset and the pool manager; panel judgments can be wrong. The ETH budget is the swap's maximum spend, not a price quote, so excess budget exposes callers to adverse price movement. Judged review: default _judge() supports only Sepolia and local tests; inheritors using it on Ethereum mainnet currently revert at construction. Before mainnet use, inheritors must override _judge() with the confirmed Judge and JudgeEthDoor addresses. It records the Judge for each open id, consumes that id before settlement hooks, and guards settlement/refund reentry. Inheritors must retain a fixed Judge while cases are open, bind questions and payouts to the intended beneficiary, never treat No or NoAnswer as entitlement to funds, use an explicit budget if retaining or spending part of msg.value, and review their own hooks and receive overrides. The same sender/value may ask only once per block. Validation: forge build succeeded; forge test --no-match-path test/fork/* passed all 111 tests with FOUNDRY_FUZZ_SEED=0xd17e95d28d14190cc2a1234655b6769019397b6ce3666166049ed3959122af0d. Tests include the exact launch arguments, dependency reference, absent ownership, runtime size/opcode checks and unchanged question wording. Fork/live dependency checks were not run. This is a predeployment manifest, not a deployment receipt: no Ethereum transaction was broadcast here, neither deployed address is yet available, and deployed bytecode matching the starting commit remains unverified pending confirmed deployment."
+}
